@@ -1,6 +1,5 @@
 import functools
-import itertools
-from collections import Counter
+
 
 
 def main():
@@ -9,13 +8,10 @@ def main():
     with open('input') as f:
         for line in f.readlines():
             if '|' in line:
-                # Handle pipe-separated pairs
                 left, right = line.split('|')
                 rules.append((int(left), int(right)))
             elif ',' in line:
-                # Handle comma-separated lists
-                # Remove any trailing commas and convert to integers
-                numbers = [int(num.strip()) for num in line.rstrip(',').split(',')]
+                numbers = [int(num.strip()) for num in line.split(',')]
                 jobs.append(numbers)
 
     def sat(job, rule):
