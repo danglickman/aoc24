@@ -1,3 +1,8 @@
+# AOC special things to ignore
+input*
+test
+test2
+
 # Prerequisites
 *.d
 
