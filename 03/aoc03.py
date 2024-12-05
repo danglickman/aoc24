@@ -1,4 +1,3 @@
-import itertools
 import re
 
 def naive_sum(stuff):
@@ -20,7 +19,6 @@ def main():
 
     # part 2
     result = 0
-    mul_pattern =re.compile(r'mul\((\d+),(\d+)\)')
     do_pattern = re.compile(r'do\(\)')
     dont_pattern = re.compile(r'don\'t\(\)')
 
