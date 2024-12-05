@@ -1,8 +1,8 @@
 with open("input") as f:
-    data = f.read()
+    data = f.read().strip()
 
 lines = data.split("\n")
-lines = [[e for e in l.split() if len(e)>0] for l in lines if len(l)!=0]
+lines = [[e for e in l.split()] for l in lines]
 
 l1 = [int(l[0]) for l in lines]
 l2 = [int(l[1]) for l in lines]
