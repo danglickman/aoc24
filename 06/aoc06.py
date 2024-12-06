@@ -46,7 +46,7 @@ print(sum(visited[(r,c)]!=[] for r, c in itertools.product(range(rows), range(co
 result = 0
 for i, row in enumerate(input_map):
     for j, el in enumerate(row):
-        if el != '#' and el != '^':
+        if visited[(i,j)] and el != '#' and el != '^':
             new_place = copy.deepcopy(input_map)
             new_place[i][j] = '#'
             if guard_path(new_place, gr,gc) is None:
