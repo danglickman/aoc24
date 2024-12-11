@@ -40,6 +40,40 @@ std::optional<std::pair<uint64_t, uint64_t>> even_digits(uint64_t number) {
 
 }
 
+// struct PairHash
+// {
+//     template <class T1, class T2>
+//     std::size_t operator() (const std::pair<T1, T2> &v) const
+//     {
+//         return std::hash<T1>()(v.first) ^ std::hash<T2>()(v.second) << 1;
+//         //return std::hash<T1>{}(v.first) ^ hash<T2>{}(v.second) << 1;    //same as above
+//     }
+// };
+
+// std::uint64_t stone_count(uint64_t stone, uint64_t blinks) {
+//     //  to use unordered map need hash object. this is probably faster
+//     static std::unordered_map<std::pair<uint64_t, uint64_t>, uint64_t, PairHash> stone_counts;
+//     if (stone_counts.contains({stone, blinks})) {
+//         return stone_counts[{stone, blinks}];
+//     }
+//     uint64_t count = 0;
+//     if (blinks == 0) {
+//         count = 1;
+//     } else if (stone == 0) {
+//         count = stone_count(1, blinks-1);
+//     } else if (auto result = even_digits(stone)) {
+//         auto parts = result.value();
+//         count += stone_count(parts.first, blinks-1);
+//         count += stone_count(parts.second, blinks-1);
+//     } else {
+//         auto new_value = stone * 2024;
+//         count += stone_count(new_value, blinks-1);
+//     }
+//     stone_counts[std::make_pair(stone, blinks)] = count;
+//     return count;
+// }
+
+
 int main() {
 
     // read input
@@ -50,16 +84,19 @@ int main() {
 
     std::unordered_map<uint64_t, uint64_t> stones;
     std::unordered_map<uint64_t, uint64_t> next_stones;
+    // std::vector<uint64_t> stone_list;
 
     while (std::getline(input_fs, line)) {
         auto ss = std::stringstream(line);
         uint64_t a;
         while (ss >> a) {
             stones[a]++;
+            // stone_list.push_back(a);
         }
     }
 
     constexpr uint64_t blinks = 75;
+
 
     // # 0 -> 1
     // # no_digits even -> split in half
@@ -110,9 +147,15 @@ int main() {
     for (auto& stone : stones) {
         sum += stone.second;
     }
+    //
+    // sum = std::transform_reduce(stone_list.begin(), stone_list.end(), 0,  std::plus(), [](uint64_t a){stone_count(a, blinks);});
+    //
+    // uint64_t sum = 0;
+    // for (auto stone : stone_list) {
+    //     sum += stone_count(stone, blinks);
+    // }
+
     std::cout << sum << std::endl;
-
-
 
 
     return 0;
