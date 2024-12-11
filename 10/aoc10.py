@@ -1,4 +1,6 @@
 import itertools
+import operator
+from functools import reduce
 
 with open('input') as f:
     input = f.read().strip()
@@ -19,13 +21,14 @@ def count_trails(r, c, f, to):
     elif f==to:
         return [(r,c)]
     else:
-        return itertools.chain.from_iterable(count_trails(r + dr, c + dc, f+1, to) for dr, dc in directions if in_range((r+dr,c+dc)))
-
+        # return itertools.chain.from_iterable(count_trails(r + dr, c + dc, f+1, to) for dr, dc in directions if in_range((r+dr,c+dc)))
+        return list(reduce(operator.add,
+            [count_trails(r + dr, c + dc, f + 1, to) for dr, dc in directions if in_range((r + dr, c + dc))]))
 p1 = 0
 p2 = 0
 for i in range(n_rows):
     for j in range(n_cols):
-        search = list(count_trails(i, j, 0, 9))
+        search = count_trails(i, j, 0, 9)
         p2 += len(search)
         p1 += len(set(search))
 
