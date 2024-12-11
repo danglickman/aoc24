@@ -81,9 +81,11 @@ int main() {
     if (!input_fs.is_open()) exit(1);
     std::string line;
 
-
-    std::unordered_map<uint64_t, uint64_t> stones;
-    std::unordered_map<uint64_t, uint64_t> next_stones;
+    // Unordered map breaks this somehow (I have no idea how/why)
+    // could be that I have a bug that depends on iteration order?
+    //
+    std::map<uint64_t, uint64_t> stones;
+    std::map<uint64_t, uint64_t> next_stones;
     // std::vector<uint64_t> stone_list;
 
     while (std::getline(input_fs, line)) {
@@ -142,6 +144,11 @@ int main() {
         next_stones.clear();
 
     }
+
+    //
+    // for (auto& stone : stones) {
+    //     std::cout << "(" << stone.first << ":" << stone.second << ")\n " ;
+    // }
 
     uint64_t sum = 0;
     for (auto& stone : stones) {
