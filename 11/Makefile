@@ -1,5 +1,5 @@
 CC=g++-13
-CPPFLAGS=-g -Wall -Wextra -Wshadow  -Wpedantic -Wconversion -Wnon-virtual-dtor -std=c++20 #-Werror
+CPPFLAGS=-g -Wall -Wextra -Wshadow  -Wpedantic -Wconversion -Wnon-virtual-dtor -O3 -std=c++20 #-Werror
 SOURCES =solution.cpp
 HEADERS =
 #DEPS =

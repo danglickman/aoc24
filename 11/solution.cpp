@@ -17,6 +17,7 @@ std::optional<std::pair<uint64_t, uint64_t>> even_digits(uint64_t number) {
     uint64_t a, b;
     a = b = 0;
     std::vector<uint64_t> digits;
+    digits.reserve(16);
     while (number != 0) {
         digits.push_back(number % 10);
         number /= 10;
@@ -26,7 +27,7 @@ std::optional<std::pair<uint64_t, uint64_t>> even_digits(uint64_t number) {
         return {};
     }
 
-    std::reverse(digits.begin(), digits.end());
+    std::ranges::reverse(digits);
     for (auto i = 0; i < digits.size()/2; i++) {
         a *= 10;
         a += digits[i];
@@ -40,69 +41,45 @@ std::optional<std::pair<uint64_t, uint64_t>> even_digits(uint64_t number) {
 
 }
 
-// struct PairHash
-// {
-//     template <class T1, class T2>
-//     std::size_t operator() (const std::pair<T1, T2> &v) const
-//     {
-//         return std::hash<T1>()(v.first) ^ std::hash<T2>()(v.second) << 1;
-//         //return std::hash<T1>{}(v.first) ^ hash<T2>{}(v.second) << 1;    //same as above
-//     }
-// };
-
-// std::uint64_t stone_count(uint64_t stone, uint64_t blinks) {
-//     //  to use unordered map need hash object. this is probably faster
-//     static std::unordered_map<std::pair<uint64_t, uint64_t>, uint64_t, PairHash> stone_counts;
-//     if (stone_counts.contains({stone, blinks})) {
-//         return stone_counts[{stone, blinks}];
-//     }
-//     uint64_t count = 0;
-//     if (blinks == 0) {
-//         count = 1;
-//     } else if (stone == 0) {
-//         count = stone_count(1, blinks-1);
-//     } else if (auto result = even_digits(stone)) {
-//         auto parts = result.value();
-//         count += stone_count(parts.first, blinks-1);
-//         count += stone_count(parts.second, blinks-1);
-//     } else {
-//         auto new_value = stone * 2024;
-//         count += stone_count(new_value, blinks-1);
-//     }
-//     stone_counts[std::make_pair(stone, blinks)] = count;
-//     return count;
-// }
-
-
-int main() {
-
-    // read input
-    std::ifstream input_fs("input");
-    if (!input_fs.is_open()) exit(1);
-    std::string line;
-
-    // Unordered map breaks this somehow (I have no idea how/why)
-    // could be that I have a bug that depends on iteration order?
-    //
-    std::map<uint64_t, uint64_t> stones;
-    std::map<uint64_t, uint64_t> next_stones;
-    // std::vector<uint64_t> stone_list;
-
-    while (std::getline(input_fs, line)) {
-        auto ss = std::stringstream(line);
-        uint64_t a;
-        while (ss >> a) {
-            stones[a]++;
-            // stone_list.push_back(a);
-        }
+struct PairHash
+{
+    template <class T1, class T2>
+    std::size_t operator() (const std::pair<T1, T2> &v) const
+    {
+        return std::hash<T1>()(v.first) ^ std::hash<T2>()(v.second) << 1;
+        //return std::hash<T1>{}(v.first) ^ hash<T2>{}(v.second) << 1;    //same as above
     }
+};
 
-    constexpr uint64_t blinks = 75;
+std::uint64_t stone_count(uint64_t stone, uint64_t blinks) {
+    //  to use unordered map need hash object. this is probably faster
+    static std::unordered_map<std::pair<uint64_t, uint64_t>, uint64_t, PairHash> stone_counts;
+    if (stone_counts.contains({stone, blinks})) {
+        return stone_counts[{stone, blinks}];
+    }
+    uint64_t count = 0;
+    if (blinks == 0) {
+        count = 1;
+    } else if (stone == 0) {
+        count = stone_count(1, blinks-1);
+    } else if (auto result = even_digits(stone)) {
+        auto parts = result.value();
+        count += stone_count(parts.first, blinks-1);
+        count += stone_count(parts.second, blinks-1);
+    } else {
+        auto new_value = stone * 2024;
+        count += stone_count(new_value, blinks-1);
+    }
+    stone_counts[std::make_pair(stone, blinks)] = count;
+    return count;
+}
 
 
+void first_solution(std::map<uint64_t, uint64_t> &stones, uint64_t blinks) {
     // # 0 -> 1
     // # no_digits even -> split in half
     // # else: mult by 2024
+    std::map<uint64_t, uint64_t> next_stones;
     for (auto i = 0; i < blinks; i++) {
         // std::cout << "Blink: " << i << std::endl;
         // for (auto& stone : stones) {
@@ -145,7 +122,38 @@ int main() {
 
     }
 
+}
+
+
+int main() {
+
+    // read input
+    std::ifstream input_fs("input");
+    if (!input_fs.is_open()) exit(1);
+    std::string line;
+
+    // Unordered map breaks this somehow (I have no idea how/why)
+    // could be that I have a bug that depends on iteration order?
     //
+    std::map<uint64_t, uint64_t> stones;
+    // std::vector<uint64_t> stone_list;
+
+    while (std::getline(input_fs, line)) {
+        auto ss = std::stringstream(line);
+        uint64_t a;
+        while (ss >> a) {
+            stones[a]++;
+            // stone_list.push_back(a);
+        }
+    }
+
+    constexpr uint64_t blinks = 75;
+
+
+
+    first_solution(stones, blinks);
+
+
     // for (auto& stone : stones) {
     //     std::cout << "(" << stone.first << ":" << stone.second << ")\n " ;
     // }
@@ -154,8 +162,7 @@ int main() {
     for (auto& stone : stones) {
         sum += stone.second;
     }
-    //
-    // sum = std::transform_reduce(stone_list.begin(), stone_list.end(), 0,  std::plus(), [](uint64_t a){stone_count(a, blinks);});
+
     //
     // uint64_t sum = 0;
     // for (auto stone : stone_list) {
