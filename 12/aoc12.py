@@ -1,8 +1,4 @@
-import functools
-import itertools
 from collections import deque
-
-from nltk.sem.chat80 import borders
 
 with open('input') as f:
     input = f.read().strip()
