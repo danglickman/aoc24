@@ -13,12 +13,9 @@ def makable(o):
     if len(o) == 0:
         return 1
     for t in towels:
-        if len(o) < len(t):
-            continue
-        else:
-            if o.startswith(t):
-                if n :=makable(o[len(t):]):
-                    res +=n
+        if o.startswith(t):
+            if n :=makable(o[len(t):]):
+                res +=n
     return res
 
 p1 = 0
