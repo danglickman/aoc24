@@ -19,8 +19,9 @@ def get_neighbours(pos):
     return [(pos[0]+1,pos[1]), (pos[0]-1,pos[1]), (pos[0],pos[1]+1), (pos[0],pos[1]-1)]
 
 times = []
+bytes_fallen = set(bytes[:time])
 while True:
-    bytes_fallen = set(bytes[:time])
+    bytes_fallen.add(bytes[time-1])
     frontier = deque([(start, 0)])
     visited = set()
     while frontier:
