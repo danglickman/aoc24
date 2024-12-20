@@ -7,8 +7,8 @@ bytes = [tuple(map(int,l.split(','))) for l in input]
 size = 70
 
 # time = 12
-time = 1024
-bytes_fallen = set(bytes[:time])
+time_init = 1024
+# bytes_fallen = set(bytes[:time])
 
 start = (0,0)
 end = (size,size)
@@ -19,11 +19,21 @@ def get_neighbours(pos):
     return [(pos[0]+1,pos[1]), (pos[0]-1,pos[1]), (pos[0],pos[1]+1), (pos[0],pos[1]-1)]
 
 times = []
-bytes_fallen = set(bytes[:time])
+
+# binary search for last viable time
+time_min = time_init
+time_max = size * size
 while True:
-    bytes_fallen.add(bytes[time-1])
+    if time_min > time_max:
+        break
+    if len(times)==0:
+        time = time_min
+    else:
+        time = (time_max + time_min) // 2
+    bytes_fallen = set(bytes[:time])
     frontier = deque([(start, 0)])
     visited = set()
+    found = False
     while frontier:
         pos, steps = frontier.popleft()
         if pos in visited:
@@ -31,13 +41,15 @@ while True:
         visited.add(pos)
         if pos == end:
             times.append((time, steps))
+            time_min = time + 1
+            found = True
             break
         for n in get_neighbours(pos):
             if n not in visited and in_range(n) and not (n in bytes_fallen):
                 frontier.append((n, steps+1))
-    if times[-1][0] != time:
-        break
-    time += 1
+    if not found:
+        time_max = time-1
 
-print(times[1][1])
+print(times[0][1])
+# print(times[-1])
 print(bytes[times[-1][0]])
